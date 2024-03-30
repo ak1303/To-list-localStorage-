@@ -18,20 +18,25 @@ function compareDate(taskDate,todayDate){
 }
 // Adding task already present in local storage
 let tCount=0,fCount=0,cCount=0;
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-tasks.forEach((obj,idx)=>{
-    let {name, date, priority} = obj;
-    let taskDiv = makeItem(name,priority,date);
-    if(obj.completed==true){
-        addTaskToList(taskDiv,date,name,priority,true);
-    }else{
-        addTaskToList(taskDiv,date,name,priority,false);
-        const today = new Date();
-        const todayDateString = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        let isPending = compareDate(date,todayDateString);
-        if(isPending)taskDiv.style.border='3px solid red';
-    }
-});
+function render(){
+    tCount=0;fCount=0;cCount=0;
+    todayDiv.innerHTML='';futureDiv.innerHTML='';completedDiv.innerHTML='';
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    tasks.forEach((obj,idx)=>{
+        let {name, date, priority} = obj;
+        let taskDiv = makeItem(name,priority,date);
+        if(obj.completed==true){
+            addTaskToList(taskDiv,date,name,priority,true);
+        }else{
+            addTaskToList(taskDiv,date,name,priority,false);
+            const today = new Date();
+            const todayDateString = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            let isPending = compareDate(date,todayDateString);
+            if(isPending)taskDiv.style.border='3px solid red';
+        }
+    });
+}
+render();
 //--------------------------------------------------
 
 function reloadAtMidnight() {
@@ -149,7 +154,7 @@ function addEventToBtns(checkBtn,trashBtn,taskDiv,itemName,priority,date){
             }
         }
         localStorage.setItem('tasks', JSON.stringify(arr));
-        location.reload();
+        render();
     })
     trashBtn.addEventListener('click',(e)=>{//delete tasks
         taskDiv.remove();
@@ -157,7 +162,7 @@ function addEventToBtns(checkBtn,trashBtn,taskDiv,itemName,priority,date){
         let arr = JSON.parse(localStorage.getItem('tasks')) || [];
         arr = arr.filter(obj=>obj.name!==itemName);
         localStorage.setItem('tasks',JSON.stringify(arr));
-        location.reload();
+        lrender();
     })
 }
 

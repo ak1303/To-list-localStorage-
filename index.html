@@ -14,6 +14,7 @@
         </div>
         <div class="addSection">
             <input type="text" id="itemName" placeholder="Item Name">
+            <div id="deadline"><div id="dateText">Deadline</div><input type="date" id="calendar"></div>
             <div id="priority">
                 Priority
                 <select id="selectPriority" name="priority">
@@ -23,19 +24,32 @@
                     <option id="option3" name="priority" value="option3">Low</option>
                 </select>
             </div>
-            <div id="deadline"><div id="dateText">Deadline</div><input type="date" id="calendar"></div>
             <button class="btn">Add Item</button>
         </div>
+        <h2>Today’s TodoList</h2>
         <div class="today list">
-            <h2>Today’s TodoList</h2>
+
         </div>
+        <h2>Future TodoList</h2>
         <div class="future list">
-            <h2>Future TodoList</h2>
+
         </div>
+        <h2>Completed TodoList</h2>
         <div class="completed list">
-            <h2>Completed TodoList</h2>
+            
         </div>
     </div>
     <script src="script.js"></script>
 </body>
 </html>
+<!-- 
+    functionalities->
+
+    add task
+    delete task
+    complete task
+    all list are numbered
+    check for old task at midnight
+    incomplete task after due date are highlighted with red border 
+    local Storage keep track of all task and render task as it is on next visit
+ -->
