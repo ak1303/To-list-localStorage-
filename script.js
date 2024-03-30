@@ -162,7 +162,7 @@ function addEventToBtns(checkBtn,trashBtn,taskDiv,itemName,priority,date){
         let arr = JSON.parse(localStorage.getItem('tasks')) || [];
         arr = arr.filter(obj=>obj.name!==itemName);
         localStorage.setItem('tasks',JSON.stringify(arr));
-        lrender();
+        render();
     })
 }
 
