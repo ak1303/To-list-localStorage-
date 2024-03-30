@@ -17,6 +17,7 @@ function compareDate(taskDate,todayDate){
     return false;
 }
 // Adding task already present in local storage
+let tCount=0,fCount=0,cCount=0;
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 tasks.forEach((obj,idx)=>{
     let {name, date, priority} = obj;
@@ -40,7 +41,7 @@ function reloadAtMidnight() {
     // Calculate the milliseconds until midnight
     const midnight = new Date();
     midnight.setHours(24, 0, 0, 0); // Set to 12:00 AM of the next day
-    const millisecondsUntilMidnight = midnight - currentTime;
+    const millisecondsUntilMidnight = midnight - currentTime + 1000;
 
     // Schedule the page reload at midnight
     setTimeout(() => {
@@ -80,9 +81,9 @@ addItemBtn.addEventListener('click',(e)=>{
 function makeItem(itemName,priority,date){
     let div = document.createElement('div');
     div.innerHTML=`
-        <div>${itemName}</div>
-        <div>Priority: ${priority}</div>
-        <div>${date}</div>
+        <div class="taskItem name">${itemName}</div>
+        <div class="taskItem">Priority: ${priority}</div>
+        <div class="taskItem">${date}</div>
         <div id="taskIcon">
             <img src="images/check-circle.png" id="check" alt="mark complete">
             <img src="images/trash.png" id="trash" alt="delete">
@@ -96,6 +97,7 @@ function makeItem(itemName,priority,date){
 }
 
 function addTaskToList(taskDiv,date,itemName,priority,completed){
+    let itemNameDiv = taskDiv.querySelector('.name');
     taskDiv.classList.add('task');
     const today = new Date();
     const todayDateString = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }); // Format: dd-mm-yyyy
@@ -107,6 +109,8 @@ function addTaskToList(taskDiv,date,itemName,priority,completed){
     let checkBtn = taskDiv.querySelector('#check');
     let trashBtn = taskDiv.querySelector('#trash');
     if (completed) {
+        cCount++;
+        itemNameDiv.innerText=`${cCount}. `+itemNameDiv.innerText;
         completedDiv.append(taskDiv);
         checkBtn.classList.add('hide');
         taskDiv.style.color='black';    
@@ -114,11 +118,17 @@ function addTaskToList(taskDiv,date,itemName,priority,completed){
         taskDiv.style.backgroundColor='white';
         trashBtn.setAttribute('src', 'images/trash-black.png');
     } else {
-        if (todayDateString === selectedDateString) todayDiv.append(taskDiv);
-        else futureDiv.append(taskDiv);
+        if (todayDateString === selectedDateString){
+            tCount++;
+            itemNameDiv.innerText=`${tCount}. `+itemNameDiv.innerText;
+            todayDiv.append(taskDiv);
+        } 
+        else {
+            fCount++;
+            itemNameDiv.innerText=`${fCount}. `+itemNameDiv.innerText;
+            futureDiv.append(taskDiv);
+        }
     }
-
-
     addEventToBtns(checkBtn,trashBtn,taskDiv,itemName,priority,formattedDate);
 }
 
@@ -139,7 +149,7 @@ function addEventToBtns(checkBtn,trashBtn,taskDiv,itemName,priority,date){
             }
         }
         localStorage.setItem('tasks', JSON.stringify(arr));
-;
+        location.reload();
     })
     trashBtn.addEventListener('click',(e)=>{//delete tasks
         taskDiv.remove();
@@ -147,6 +157,7 @@ function addEventToBtns(checkBtn,trashBtn,taskDiv,itemName,priority,date){
         let arr = JSON.parse(localStorage.getItem('tasks')) || [];
         arr = arr.filter(obj=>obj.name!==itemName);
         localStorage.setItem('tasks',JSON.stringify(arr));
+        location.reload();
     })
 }
 
