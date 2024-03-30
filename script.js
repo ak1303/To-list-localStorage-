@@ -7,6 +7,15 @@ const priorityInput = document.getElementById('selectPriority');
 const dateInput = document.getElementById('calendar');
 const addItemBtn = document.querySelector('.btn');
 
+function compareDate(taskDate,todayDate){
+    const parts1 = taskDate.split('/');
+    const dateObj1 = new Date(parts1[2], parts1[1] - 1, parts1[0]); // Year, Month (0-indexed), Day
+    
+    const parts2 = todayDate.split('/');
+    const dateObj2 = new Date(parts2[2], parts2[1] - 1, parts2[0]);
+    if(dateObj1 < dateObj2)return true;
+    return false;
+}
 // Adding task already present in local storage
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 tasks.forEach((obj,idx)=>{
@@ -16,20 +25,39 @@ tasks.forEach((obj,idx)=>{
         addTaskToList(taskDiv,date,name,priority,true);
     }else{
         addTaskToList(taskDiv,date,name,priority,false);
+        const today = new Date();
+        const todayDateString = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        let isPending = compareDate(date,todayDateString);
+        if(isPending)taskDiv.style.border='3px solid red';
     }
 });
 //--------------------------------------------------
 
+function reloadAtMidnight() {
+    // Get the current time
+    const currentTime = new Date();
+    
+    // Calculate the milliseconds until midnight
+    const midnight = new Date();
+    midnight.setHours(24, 0, 0, 0); // Set to 12:00 AM of the next day
+    const millisecondsUntilMidnight = midnight - currentTime;
+
+    // Schedule the page reload at midnight
+    setTimeout(() => {
+        location.reload();
+    }, millisecondsUntilMidnight);
+}
+
+// Start the reload scheduling
+reloadAtMidnight();
 
 // adding task on clicking add Item Button
 addItemBtn.addEventListener('click',(e)=>{
-    console.log('add item pressed');
     let itemName = itemInput.value;
     let priority = priorityInput[priorityInput.selectedIndex].textContent;
     let date = dateInput.value;
     if(itemName && priority && date){
-        console.log('all values entered');
-        let formattedDate = new Date(date).toLocaleDateString('en-GB', {day: 'numeric', month: 'numeric', year: 'numeric'});
+        let formattedDate = new Date(date).toLocaleDateString('en-GB', {day: '2-digit', month: '2-digit', year: 'numeric'});
         let taskDiv = makeItem(itemName,priority,formattedDate);
         addTaskToList(taskDiv,formattedDate,itemName,priority,false);
         // set added task to local storage
@@ -60,7 +88,10 @@ function makeItem(itemName,priority,date){
             <img src="images/trash.png" id="trash" alt="delete">
         </div>
     `;
-
+    const today = new Date();
+    const todayDateString = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    let isPending = compareDate(date,todayDateString);
+    if(isPending)div.style.border='3px solid red';
     return div;
 }
 
@@ -68,9 +99,8 @@ function addTaskToList(taskDiv,date,itemName,priority,completed){
     taskDiv.classList.add('task');
     const today = new Date();
     const todayDateString = today.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }); // Format: dd-mm-yyyy
-
-    const parts = date.split('-');
-    const formattedDate = `${parts[0]}-${parts[1]}-${parts[2]}`; // Format: dd-mm-yyyy
+    const parts = date.split('/');
+    const formattedDate = `${parts[0]}/${parts[1]}/${parts[2]}`; // Format: dd-mm-yyyy
 
     const selectedDateString = formattedDate;
 
@@ -79,7 +109,8 @@ function addTaskToList(taskDiv,date,itemName,priority,completed){
     if (completed) {
         completedDiv.append(taskDiv);
         checkBtn.classList.add('hide');
-        taskDiv.style.color='black';
+        taskDiv.style.color='black';    
+        taskDiv.style.border='2px solid black';
         taskDiv.style.backgroundColor='white';
         trashBtn.setAttribute('src', 'images/trash-black.png');
     } else {
@@ -97,8 +128,9 @@ function addEventToBtns(checkBtn,trashBtn,taskDiv,itemName,priority,date){
         checkBtn.classList.add('hide');
         taskDiv.style.color='black';
         taskDiv.style.backgroundColor='white';
+        taskDiv.style.border='2px solid black';
         trashBtn.setAttribute('src', 'images/trash-black.png');
-        //change localStorage completes:true
+        //change localStorage completed:true
         let arr = JSON.parse(localStorage.getItem('tasks')) || [];
         for (let obj of arr) {
             if (obj.name === itemName) {

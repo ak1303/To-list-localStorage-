@@ -3,6 +3,9 @@
     margin: 0;
     box-sizing: border-box;
 }
+:root{
+    background-color: #f7f7f0;
+}
 .container{
     display:flex;
     flex-direction: column;
@@ -34,6 +37,7 @@
     flex-grow: 1;
     padding: 7.2px;
     height:50px;
+    background-color: #f7f7f0;
 }
 #itemName::placeholder{
     font-weight: 500;
@@ -49,6 +53,7 @@
 #calendar{
     border:none;
     width:40%;
+    padding: 11px;
     font-size: 16px;
 }
 #dateText{
@@ -67,13 +72,17 @@
 }
 select{
     border: none;
+    padding: 11px;
+    background-color: #f7f7f0;
     width:40%;
 }
 select:focus{
     border: none;
 }
-#calender{
+
+#calendar{
     margin-left: auto;
+    background-color: #f7f7f0;
 }
 .btn{
     color:white;
